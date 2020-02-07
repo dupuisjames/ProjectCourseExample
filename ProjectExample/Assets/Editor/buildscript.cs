@@ -18,19 +18,19 @@ class BuildScript
 	static void PerformWindowsBuild ()
 	{
 		string target_dir = APP_NAME + ".exe";
-		GenericBuild(SCENES, TARGET_DIR + "/" + target_dir, BuildTarget.StandaloneWindows,BuildOptions.None);
+		GenericBuild(SCENES, TARGET_DIR + "/" + target_dir, BuildTargetGroup.Standalone, BuildTarget.StandaloneWindows,BuildOptions.None);
 	}
 
 	static void PerformAndroidBuild ()
 	{
-		//Set the path to the Android SDK on the machine, since Unity cannot retain the state properly
+        //Set the path to the Android SDK on the machine, since Unity cannot retain the state properly
         // TODO once android SDK is setup,
-		/*AndroidSDKFolder.Path = "${ANDROID_HOME}";
+        /*AndroidSDKFolder.Path = "${ANDROID_HOME}";
 		string target_dir = APP_NAME + ".apk";
-		GenericBuild(SCENES, TARGET_DIR + "/" + target_dir, BuildTarget.Android,BuildOptions.None);*/
-	}
+		GenericBuild(SCENES, TARGET_DIR + "/" + target_dir, BuildTargetGroup.Android, BuildTarget.Android,BuildOptions.None);*/
+    }
 
-	private static string[] FindEnabledEditorScenes() 
+    private static string[] FindEnabledEditorScenes() 
 	{
 		List<string> EditorScenes = new List<string>();
 		foreach(EditorBuildSettingsScene scene in EditorBuildSettings.scenes) 
@@ -45,14 +45,14 @@ class BuildScript
 		return EditorScenes.ToArray();
 	}
 
-	static void GenericBuild(string[] scenes, string target_dir, BuildTarget build_target, BuildOptions build_options)
+	static void GenericBuild(string[] scenes, string target_dir, BuildTargetGroup build_target_group,  BuildTarget build_target, BuildOptions build_options)
 	{
-		EditorUserBuildSettings.SwitchActiveBuildTarget(build_target);
-        string res = BuildPipeline.BuildPlayer(scenes,target_dir,build_target,build_options);
+		EditorUserBuildSettings.SwitchActiveBuildTarget(build_target_group, build_target);
+        UnityEditor.Build.Reporting.BuildReport report = BuildPipeline.BuildPlayer(scenes,target_dir,build_target,build_options);
 		
-		if (res.Length > 0) 
+		if (report.files.Length > 0) 
 		{
-			throw new Exception("BuildPlayer failure: " + res);
+			throw new Exception("BuildPlayer failure: " + report.summary);
 		}
 	}
 }
