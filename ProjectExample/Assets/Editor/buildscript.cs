@@ -50,7 +50,7 @@ class BuildScript
 		EditorUserBuildSettings.SwitchActiveBuildTarget(build_target_group, build_target);
         UnityEditor.Build.Reporting.BuildReport report = BuildPipeline.BuildPlayer(scenes,target_dir,build_target,build_options);
 		
-		if (report.files.Length > 0) 
+		if (report.summary.result == UnityEditor.Build.Reporting.BuildResult.Failed) 
 		{
 			throw new Exception("BuildPlayer failure: " + report.summary);
 		}
